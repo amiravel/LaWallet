@@ -2,7 +2,9 @@
 
 namespace App\DataTransferObjects;
 
-class TransactionDTO
+use App\DataTransferObjects\Contracts\DtoInterface;
+
+class TransactionDto extends Dto implements DtoInterface
 {
 
     public int $from_id;
@@ -24,11 +26,6 @@ class TransactionDTO
         $this->amount = $amount;
         $this->type = $type;
         $this->hash = $hash;
-    }
-
-    public function toArray()
-    {
-        return get_object_vars($this);
     }
 
 }

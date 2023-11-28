@@ -14,4 +14,21 @@ class OfferRepository extends BaseRepository implements OfferRepositoryInterface
         parent::__construct($model);
     }
 
+    public function offerScannedByUser(int $offerId, int $userId): bool
+    {
+        return $this->query->where('id', $offerId)
+            ->whereHas('users', function ($query) use ($userId){
+                $query->where('user_id', $userId);
+            })->exists();
+    }
+
+    public function findByCode(string $code): Model
+    {
+        return $this->query->where('code', $code)->first();
+    }
+
+    public function scan(Offer $offer, int $userId): void
+    {
+        $offer->users()->lockForUpdate()->attach($userId);
+    }
 }

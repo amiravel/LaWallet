@@ -25,4 +25,35 @@ class WalletRepository extends BaseRepository implements WalletRepositoryInterfa
 
         DB::commit();
     }
+
+    public function transfer(int $fromId, int $toId, int $amount): void
+    {
+        DB::beginTransaction();
+
+        $from = $this->query->lockForUpdate()->find($fromId);
+        $to = $this->query->lockForUpdate()->find($toId);
+
+        $from->decrement('amount', $amount);
+        $to->increment('amount', $amount);
+
+        DB::commit();
+    }
+
+    public function transferBlockedAmount(int $fromId, int $toId, int $amount): void
+    {
+        DB::beginTransaction();
+
+        $from = $this->query->lockForUpdate()->find($fromId);
+        $to = $this->query->lockForUpdate()->find($toId);
+
+        $from->decrement('blocked_amount', $amount);
+        $to->increment('amount', $amount);
+
+        DB::commit();
+    }
+
+    public function findByUserId(int $userId): \Illuminate\Database\Eloquent\Builder|Model
+    {
+        return $this->query->where('user_id', $userId)->first();
+    }
 }

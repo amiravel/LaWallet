@@ -2,9 +2,11 @@
 
 namespace App\Shields\Contracts;
 
+use App\DataTransferObjects\Dto;
+
 interface ShieldApplyInterface
 {
 
-    public function apply(\Illuminate\Http\Request $request);
+    public function apply(Dto $dto);
 
 }

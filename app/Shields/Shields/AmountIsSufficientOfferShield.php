@@ -2,11 +2,12 @@
 
 namespace App\Shields\Shields;
 
+use App\DataTransferObjects\OfferDto;
 use App\Repositories\Contracts\WalletRepositoryInterface;
 use App\Services\Contracts\WalletServiceInterface;
-use App\Shields\Contracts\ShieldInterface;
+use App\Shields\Contracts\OfferShieldInterface;
 
-class AmountIsSufficientShield implements ShieldInterface
+class AmountIsSufficientOfferShield implements OfferShieldInterface
 {
 
     protected WalletServiceInterface $service;
@@ -16,11 +17,11 @@ class AmountIsSufficientShield implements ShieldInterface
         $this->service = $service;
     }
 
-    public function handle(\Illuminate\Http\Request $request)
+    public function handle(OfferDto $offerDto): void
     {
-        $wallet = $this->service->find($request->get('wallet_id'));
+        $wallet = $this->service->find($offerDto->wallet_id);
 
-        $amountIsSufficient = $wallet->amount  >= $request->get('amount');
+        $amountIsSufficient = $wallet->amount  >= $offerDto->budget_amount;
 
         if (!$amountIsSufficient){
             abort(400, 'amount is not sufficient');

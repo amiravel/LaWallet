@@ -2,11 +2,13 @@
 
 namespace App\Shields\Shields;
 
+use App\DataTransferObjects\Dto;
+use App\DataTransferObjects\OfferDto;
 use App\Repositories\Contracts\WalletRepositoryInterface;
 use App\Services\Contracts\WalletServiceInterface;
-use App\Shields\Contracts\ShieldInterface;
+use App\Shields\Contracts\OfferShieldInterface;
 
-class MyWalletShield implements ShieldInterface
+class MyWalletOfferShield implements OfferShieldInterface
 {
 
     protected WalletServiceInterface $service;
@@ -16,11 +18,11 @@ class MyWalletShield implements ShieldInterface
         $this->service = $service;
     }
 
-    public function handle(\Illuminate\Http\Request $request)
+    public function handle(OfferDto $offerDto): void
     {
         $this->service->doesWalletBelongToUser(
-            $request->user()->id,
-            $request->get('wallet_id')
+            auth()->id(),
+            $offerDto->wallet_id
         );
     }
 }
