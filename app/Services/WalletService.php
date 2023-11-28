@@ -24,4 +24,8 @@ class WalletService extends BaseResourceService implements WalletServiceInterfac
         }
     }
 
+    public function blockAmount(int $walletId, int $amount) {
+        $this->repository->blockAmount($walletId, $amount);
+    }
+
 }

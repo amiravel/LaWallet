@@ -48,6 +48,21 @@ class OfferTest extends TestCase
             ->assertJsonFragment(
                 (new OfferResource($offer))->toArray(request())
             );
+
+        $this->assertDatabaseHas('offers', $data);
+
+        $this->assertDatabaseHas('wallets', [
+            'id' => $wallet->id,
+            'amount' => $wallet->amount - $offer->budget_amount,
+            'blocked_amount' => $offer->budget_amount
+        ]);
+
+        $this->assertDatabaseHas('transactions', [
+            'from_id' => $wallet->id,
+            'to_id' => $wallet->id,
+            'amount' => $offer['budget_amount']
+        ]);
+
     }
 
     public function testAdminCanSeeOfferItem()
