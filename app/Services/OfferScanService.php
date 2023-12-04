@@ -4,16 +4,16 @@ namespace App\Services;
 
 use App\Adapters\Contracts\TransactionAdapterInterface;
 use App\Models\Offer;
-use App\Repositories\Contracts\BaseRepositoryInterface;
 use App\Repositories\Contracts\OfferRepositoryInterface;
+use App\Services\Contracts\BaseResourceServiceInterface;
 use App\Services\Contracts\CacheServiceInterface;
-use App\Services\Contracts\OfferServiceInterface;
+use App\Services\Contracts\OfferScanServiceInterface;
 use App\Services\Contracts\TransactionServiceInterface;
 use App\Services\Contracts\WalletServiceInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
-class OfferService extends BaseResourceService implements OfferServiceInterface
+class OfferScanService extends BaseResourceService implements OfferScanServiceInterface
 {
 
     private WalletServiceInterface $walletService;
@@ -25,7 +25,7 @@ class OfferService extends BaseResourceService implements OfferServiceInterface
         CacheServiceInterface $cacheService,
         WalletServiceInterface $walletService,
         TransactionServiceInterface $transactionService,
-        TransactionAdapterInterface $transactionAdapter
+        TransactionAdapterInterface $transactionAdapter,
     )
     {
         parent::__construct($repository, $cacheService);
@@ -34,7 +34,20 @@ class OfferService extends BaseResourceService implements OfferServiceInterface
         $this->transactionAdapter = $transactionAdapter;
     }
 
-    public function create(array $attributes): Model
+    public function offerScannedByUser(int $offerId, int $userId): bool
+    {
+        return $this->repository->offerScannedByUser($offerId, $userId);
+    }
+
+    public function findByCode(string $code): Model
+    {
+        return $this->cacheService->setItem(
+            $this->repository,
+            $this->repository->findByCode($code)
+        );
+    }
+
+    public function scanByUser(int $offerId, int $userId)
     {
         try {
             DB::beginTransaction();
@@ -42,23 +55,28 @@ class OfferService extends BaseResourceService implements OfferServiceInterface
             /**
              * @var Offer $offer
              */
-            $offer = parent::create($attributes);
+            $offer = $this->find($offerId);
 
-            $this->walletService->blockAmount($offer->wallet_id, $offer->budget_amount);
+            $this->repository->scan($offer, $userId);
+            $scannerWallet = $this->walletService->findByUserId($userId);
+
+            $this->walletService->transferBlockedAmount(
+                $offer->wallet_id,
+                $scannerWallet->id,
+                $offer->amount_per_scan
+            );
 
             $this->transactionService->create(
-                $this->transactionAdapter->fromOfferModelToTransaction($offer)->toArray()
+                $this->transactionAdapter->scanOfferDataToTransaction($offer, $scannerWallet)->toArray()
             );
 
             DB::commit();
 
-            return $offer;
-        }catch (\Throwable $exception) {
+        }catch (\Throwable $exception){
+            dd($exception->getMessage(), $exception->getFile(), $exception->getLine());
             DB::rollBack();
 
-            throw new $exception;
+            throw  new $exception;
         }
-
     }
-
 }

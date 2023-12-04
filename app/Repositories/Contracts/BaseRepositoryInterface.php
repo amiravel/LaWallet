@@ -27,4 +27,6 @@ interface BaseRepositoryInterface
 
     public function getModel();
 
+    public function freshQuery(): void;
+
 }

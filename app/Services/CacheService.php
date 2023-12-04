@@ -34,6 +34,21 @@ class CacheService implements CacheServiceInterface
         return Cache::get($key);
     }
 
+    public function setItem(BaseRepositoryInterface $repository, $item)
+    {
+        $key = $this->getKey($repository->getModel(), $item->id);
+
+        if (!Cache::has($key)){
+
+            return Cache::remember($key, $this->timeToLive, function () use($item){
+                return $item;
+            });
+
+        }
+
+        return Cache::get($key);
+    }
+
     public function forget(BaseRepositoryInterface $repository, string $id): void
     {
         $key = $this->getKey($repository->getModel(), $id);

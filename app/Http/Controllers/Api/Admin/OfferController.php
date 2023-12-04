@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Admin;
 
+use App\Adapters\Contracts\OfferAdapterInterface;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Admin\OfferStoreRequest;
 use App\Http\Resources\Admin\OfferResource;
@@ -13,9 +14,16 @@ use Illuminate\Support\Facades\App;
 class OfferController extends Controller
 {
 
-    public function __construct(ResponseInterface $response, OfferServiceInterface $service)
+    private OfferAdapterInterface $offerAdapter;
+
+    public function __construct(
+        ResponseInterface $response,
+        OfferServiceInterface $service,
+        OfferAdapterInterface $offerAdapter
+    )
     {
         parent::__construct($response, $service);
+        $this->offerAdapter = $offerAdapter;
     }
 
     public function index()
@@ -29,7 +37,10 @@ class OfferController extends Controller
 
     public function store(OfferStoreRequest $request)
     {
-        App::make(OfferApplier::class)->apply($request);
+        App::make(OfferApplier::class)
+            ->apply(
+                $this->offerAdapter->fromRequestToOfferDto($request)
+            );
 
         return $this->response->item(
             new OfferResource(

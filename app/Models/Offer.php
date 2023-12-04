@@ -15,4 +15,9 @@ class Offer extends Model
     ];
 
     protected $guarded = [];
+
+    public function users(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(User::class);
+    }
 }

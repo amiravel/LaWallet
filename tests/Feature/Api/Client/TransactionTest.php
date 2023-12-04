@@ -28,7 +28,7 @@ class TransactionTest extends TestCase
             );
     }
 
-    public function testUserCanSeeTheirTransactionLItem()
+    public function testUserCanSeeTheirTransactionItem()
     {
         $user = $this->login();
 

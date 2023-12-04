@@ -78,4 +78,9 @@ abstract class BaseRepository implements BaseRepositoryInterface
         return $this->model;
     }
 
+    public function freshQuery():void
+    {
+        $this->query = $this->model->newQuery();
+    }
+
 }
