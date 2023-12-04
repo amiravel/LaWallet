@@ -15,6 +15,7 @@ class OfferDto extends Dto implements DtoInterface
     public $ends_at;
     public int $budget_amount;
     public ?int $scan_count;
+    public ?int $id;
 
     public function __construct(
         int $wallet_id,
@@ -24,6 +25,7 @@ class OfferDto extends Dto implements DtoInterface
         int $max_scan,
         $starts_at,
         $ends_at,
+        ?int $id = null,
         ?int $scan_count = null
     )
     {
@@ -35,6 +37,7 @@ class OfferDto extends Dto implements DtoInterface
         $this->ends_at = $ends_at;
         $this->budget_amount = $budget_amount;
         $this->scan_count = $scan_count;
+        $this->id = $id;
     }
 
 }

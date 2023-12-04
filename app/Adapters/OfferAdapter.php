@@ -33,6 +33,7 @@ class OfferAdapter implements OfferAdapterInterface
             $offer->max_scan,
             $offer->starts_at,
             $offer->ends_at,
+            $offer->id,
             $offer->users()->count()
         );
     }

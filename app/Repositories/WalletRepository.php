@@ -43,7 +43,10 @@ class WalletRepository extends BaseRepository implements WalletRepositoryInterfa
     {
         DB::beginTransaction();
 
+        $this->freshQuery();
         $from = $this->query->lockForUpdate()->find($fromId);
+
+        $this->freshQuery();
         $to = $this->query->lockForUpdate()->find($toId);
 
         $from->decrement('blocked_amount', $amount);

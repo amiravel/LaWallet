@@ -9,10 +9,11 @@ abstract class BaseApplier
 {
 
     protected array $shields = [];
+
     public function apply(Dto $dto)
     {
-        foreach ($this->shields as $shield){
-            return App::make($shield)->handle($dto);
+        foreach ($this->shields as $shield) {
+            App::make($shield)->handle($dto);
         }
     }
 

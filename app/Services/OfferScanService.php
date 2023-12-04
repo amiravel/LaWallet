@@ -61,7 +61,7 @@ class OfferScanService extends BaseResourceService implements OfferScanServiceIn
             $scannerWallet = $this->walletService->findByUserId($userId);
 
             $this->walletService->transferBlockedAmount(
-                $offerId->wallet_id,
+                $offer->wallet_id,
                 $scannerWallet->id,
                 $offer->amount_per_scan
             );
@@ -73,6 +73,7 @@ class OfferScanService extends BaseResourceService implements OfferScanServiceIn
             DB::commit();
 
         }catch (\Throwable $exception){
+            dd($exception->getMessage(), $exception->getFile(), $exception->getLine());
             DB::rollBack();
 
             throw  new $exception;

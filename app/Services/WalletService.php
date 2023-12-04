@@ -47,7 +47,7 @@ class WalletService extends BaseResourceService implements WalletServiceInterfac
 
     public function findByUserId(int $userId): Wallet
     {
-        $this->repository->findByUserId($userId);
+        return $this->repository->findByUserId($userId);
     }
 
 }

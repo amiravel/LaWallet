@@ -6,9 +6,11 @@ use App\Responses\Contracts\ResponseInterface;
 use App\Responses\Response;
 use App\Services\CacheService;
 use App\Services\Contracts\CacheServiceInterface;
+use App\Services\Contracts\OfferScanServiceInterface;
 use App\Services\Contracts\OfferServiceInterface;
 use App\Services\Contracts\TransactionServiceInterface;
 use App\Services\Contracts\WalletServiceInterface;
+use App\Services\OfferScanService;
 use App\Services\OfferService;
 use App\Services\TransactionService;
 use App\Services\WalletService;
@@ -26,6 +28,7 @@ class ServicesServiceProvider extends ServiceProvider
         $this->app->bind(CacheServiceInterface::class, CacheService::class);
         $this->app->bind(WalletServiceInterface::class, WalletService::class);
         $this->app->bind(TransactionServiceInterface::class, TransactionService::class);
+        $this->app->bind(OfferScanServiceInterface::class, OfferScanService::class);
     }
 
     /**
